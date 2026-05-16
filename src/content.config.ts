@@ -31,6 +31,7 @@ const projects = defineCollection({
     description: z.string(),
     github: z.string().url().optional(),
     paper: z.string().url().optional(),
+    pdf: z.string().optional(),
     draft: z.boolean().optional(),
     tags: z.array(z.string()).default([]),
   }),
