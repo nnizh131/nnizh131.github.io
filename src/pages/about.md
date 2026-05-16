@@ -9,4 +9,4 @@ This site is where I write — about what I'm learning, what I'm building, and w
 
 ## Get in touch
 
-[Email](mailto:nnizh20@gmail.com) · [GitHub](https://github.com/nikanizharadze) · [LinkedIn](https://www.linkedin.com/in/nikanizharadze/) · [Google Scholar](https://scholar.google.com/citations?user=BKydDqwAAAAJ&hl=en)
+[Email](mailto:nnizh20@gmail.com) · [GitHub](https://github.com/nnizh131) · [LinkedIn](https://www.linkedin.com/in/nikanizharadze/) · [Google Scholar](https://scholar.google.com/citations?user=BKydDqwAAAAJ&hl=en)

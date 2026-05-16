@@ -1,5 +1,5 @@
 export const SITE = {
-  website: "https://nikanizharadze.github.io/",
+  website: "https://nnizh131.github.io/",
   author: "Nika Nizharadze",
   profile: "https://nikanizharadze.dev/",
   desc: "Personal site and blog by Nika Nizharadze.",

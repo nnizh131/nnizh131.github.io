@@ -1,7 +1,7 @@
 ---
 title: This Website
 description: Personal site and blog built with Astro and the AstroPaper theme. Fast, minimal, and easy to write for.
-github: https://github.com/nikanizharadze/nikanizharadze.github.io
+github: https://github.com/nnizh131/nnizh131.github.io
 draft: false
 tags: [Astro, TypeScript, Tailwind]
 ---
