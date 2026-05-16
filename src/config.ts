@@ -1,0 +1,23 @@
+export const SITE = {
+  website: "https://nikanizharadze.github.io/",
+  author: "Nika Nizharadze",
+  profile: "https://nikanizharadze.dev/",
+  desc: "Personal site and blog by Nika Nizharadze.",
+  title: "Nika Nizharadze",
+  ogImage: "og.jpg",
+  lightAndDarkMode: true,
+  postPerIndex: 10,
+  postPerPage: 10,
+  scheduledPostMargin: 15 * 60 * 1000,
+  showArchives: false,
+  showBackButton: true,
+  editPost: {
+    enabled: false,
+    text: "Edit page",
+    url: "",
+  },
+  dynamicOgImage: true,
+  dir: "ltr",
+  lang: "en",
+  timezone: "Europe/Berlin",
+} as const;
