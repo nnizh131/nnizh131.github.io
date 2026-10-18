@@ -34,8 +34,9 @@ On macOS, with Homebrew already installed:
 brew install --cask ghostty
 brew install tmux powerlevel10k jq
 brew install raine/workmux/workmux
-brew install --cask font-jetbrains-mono
 ```
+
+Ghostty already bundles JetBrains Mono and Nerd Font symbols, so no separate font installation is needed for this terminal setup. The Homebrew font cask is only useful if you also want the font available to other applications. See [Ghostty's bundled defaults](https://ghostty.org/docs/config).
 
 I ran the installs sequentially and backed up the existing configuration files before editing them. I kept unrelated settings rather than replacing whole files with a new set of dotfiles.
 
@@ -90,7 +91,7 @@ Save with **Ctrl+O**, **Enter**, then exit with **Ctrl+X**. Validate the configu
 
 The second command uses `rg`; install it with `brew install ripgrep` if needed. Reload Ghostty with **Cmd+Shift+,** after validation succeeds.
 
-Size 14 is what I'm trying. Dawn's background is a very pale cream, `#faf4ed`. Ghostty supplies the symbol fallback for the icons in my prompt, so I didn't install a separate patched font.
+Size 14 is what I'm trying. Dawn's background is a very pale cream, `#faf4ed`. Ghostty supplies both JetBrains Mono and the symbol fallback for the icons in my prompt. The explicit `font-family` line documents the choice; it doesn't require a separate font install.
 
 I kept the existing single-line, segmented Powerlevel10k layout. It already showed the things I wanted: macOS, current directory, Git branch, and command status. I changed its fixed colors to fit Dawn:
 
