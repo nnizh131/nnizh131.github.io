@@ -181,7 +181,7 @@ sidebar:
         - "{pane_title} {fill} {git_stats}"
 ```
 
-The sidebar keeps agent identity, elapsed time, and Git diff information beside the task panes. `{agent_icon}` shows identity, such as **CX** for Codex. `nerdfont: true` changes status symbols; it does not replace the CX label with a logo. Unknown agent identities render an empty icon.
+The sidebar keeps agent identity, elapsed time, and Git diff information beside the task panes. `{agent_icon}` shows identity, such as **CX** for Codex. `nerdfont: true` changes status symbols; it does not replace the CX label with a logo.
 
 ### Hooks and missing agents
 
