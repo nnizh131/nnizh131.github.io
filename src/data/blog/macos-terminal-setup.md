@@ -224,10 +224,8 @@ copy_on_select = "always"
 status_line = ["model-with-reasoning", "context-used", "five-hour-limit", "weekly-limit"]
 ```
 
-Restart Codex and use `codex resume` to return to the conversation. The `/statusline` picker lets you choose the footer items supported by your version. Copying works in my direct Codex and tmux sessions.
+Restart Codex to apply the settings, then use `codex resume` to return to the conversation. Use `/statusline` to choose the footer items available in your version.
 
-Claude Code has its own footer and clipboard settings. Its clipboard path still needs checking in my session.
-
-I’m leaving the tmux prefix, editor navigation, and final status-bar layout open for now.
+This setup uses **Ctrl+B** as the tmux prefix and Vi-style copy-mode bindings. [Part 2: Shortcuts](/posts/macos-terminal-shortcuts/) covers navigation and copying.
 
 Continue with [Part 2: Shortcuts](/posts/macos-terminal-shortcuts/) for the keybindings I use with this setup, or [Part 3: Daily workflow](/posts/macos-terminal-workflow/) for the task-by-task flow.
