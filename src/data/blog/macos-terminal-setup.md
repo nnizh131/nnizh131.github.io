@@ -202,7 +202,21 @@ A **configured** result confirms installation. For Codex, also check `/hooks` fo
 | Permission request      | `workmux set-window-status waiting` |
 | Turn finished           | `workmux set-window-status done`    |
 
-In my Ghostty, tmux 3.8, workmux 0.1.276, and Codex CLI 0.163.0 session, the hooks were installed, enabled, and firing, but the sidebar still showed **No agents running**. The workmux log showed `tmux_pane=None`: the hook processes had lost their tmux pane context. Workmux could not associate those events with the running agent. Reinstalling or trusting the same hooks again did not address that missing association.
+In my Ghostty, tmux 3.8, workmux 0.1.276, and Codex CLI 0.163.0 session, the hooks were installed, enabled, and firing, but the sidebar still showed **No agents running**. The workmux log showed `tmux_pane=None`: the hook processes had lost their tmux pane context. Workmux could not associate those events with the running agent. Codex was using its shared background server, so the hook processes were outside the agent’s tmux process tree. Reinstalling or trusting the same hooks again did not address that missing association.
+
+Starting Codex without the shared server fixed automatic registration in my setup. Run this from the tmux pane where you want the agent:
+
+```sh
+codex --no-daemon
+```
+
+The agent then appeared automatically in the sidebar. To use this launch mode whenever I type `codex` in Zsh, I added this to `~/.zshrc`:
+
+```zsh
+alias codex='codex --no-daemon'
+```
+
+Open a new shell or run `source ~/.zshrc` to load it. This alias affects interactive shell commands; scripts and workmux configurations that launch Codex directly should use `codex --no-daemon` explicitly. The session-ID binding below is a workaround for an existing session launched through the shared server.
 
 Find the agent pane from another shell inside the **same tmux server**:
 
@@ -233,7 +247,7 @@ printf '{"session_id":"%s"}\n' "$agent_session" |
 
 Use the Codex session ID from that conversation’s session metadata, not its title or tmux pane ID. Do not guess a pane from the working directory: multiple agents can share it. This binding repairs the current session; it does not establish a permanent fix for fresh sessions.
 
-After binding, new prompts produced working → done transitions automatically in my session. A status update also resolved the pane with the tmux targeting variables removed. Fresh-session registration, the permission-request waiting state, and persistent identity detection still need an end-to-end check. See the [upstream status-tracking guide](https://workmux.raine.dev/guide/status-tracking/).
+After binding, new prompts produced working → done transitions automatically in my session. A status update also resolved the pane with the tmux targeting variables removed. Automatic registration was subsequently verified with `codex --no-daemon`. The permission-request waiting state and persistent identity detection still need an end-to-end check. See the [upstream status-tracking guide](https://workmux.raine.dev/guide/status-tracking/).
 
 ## Agent footer and clipboard
 
