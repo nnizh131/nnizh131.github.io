@@ -69,13 +69,10 @@ alias codex='codex --no-daemon'
 
 ### Step B: Configure the Starship prompt
 
-Start with the Gruvbox Rainbow preset. Back up an existing Starship config first, since the preset command replaces it:
+Start with the Gruvbox Rainbow preset:
 
 ```sh
 mkdir -p ~/.config
-if [ -f ~/.config/starship.toml ]; then
-  cp -p ~/.config/starship.toml ~/.config/starship.toml.backup-$(date +%Y%m%d-%H%M%S)
-fi
 starship preset gruvbox-rainbow -o ~/.config/starship.toml
 ```
 
