@@ -214,12 +214,26 @@ The agent then appeared automatically in the sidebar. To use this launch mode wh
 alias codex='codex --no-daemon'
 ```
 
-## 6. Agent footer and clipboard
+## 6. Codex theme, footer, and clipboard
+
+Ghostty’s terminal theme and Codex’s syntax-highlighting theme are separate settings. I use the official [Rosé Pine Dawn TextMate theme](https://github.com/rose-pine/tm-theme) for Codex code blocks and diffs, matching Ghostty’s Dawn palette.
+
+Install the theme:
+
+```sh
+mkdir -p "${CODEX_HOME:-$HOME/.codex}/themes"
+curl -fL \
+  https://raw.githubusercontent.com/rose-pine/tm-theme/main/dist/rose-pine-dawn.tmTheme \
+  -o "${CODEX_HOME:-$HOME/.codex}/themes/rose-pine-dawn.tmTheme"
+```
+
+Run `/theme` in Codex and select **Rosé Pine Dawn**, or set `theme = "rose-pine-dawn"` in the existing `[tui]` table. Codex supports custom `.tmTheme` files in `$CODEX_HOME/themes`; see the [official theme instructions](https://learn.chatgpt.com/docs/cli-customization#syntax-highlighting-and-themes).
 
 In my Codex CLI 0.163.0 setup, these settings share the existing `[tui]` table in `${CODEX_HOME:-~/.codex}/config.toml`:
 
 ```toml
 [tui]
+theme = "rose-pine-dawn"
 copy_on_select = "always"
 status_line = ["model-with-reasoning", "context-used", "five-hour-limit", "weekly-limit"]
 ```
