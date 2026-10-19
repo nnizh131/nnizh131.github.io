@@ -1,5 +1,5 @@
 ---
-title: "My macOS terminal setup: Ghostty, tmux, and workmux"
+title: "Modern macOS Terminal Setup: Ghostty, tmux, and workmux"
 author: Nika Nizharadze
 pubDatetime: 2026-10-18T08:00:00Z
 modDatetime: 2026-10-19T08:00:00Z
@@ -9,16 +9,16 @@ tags:
   - macos
   - terminal
   - developer-tools
-description: "My compact macOS terminal setup: Ghostty, Starship, eza, tmux, and workmux, with working clipboard support."
+description: "A practical macOS terminal setup with Ghostty, Zsh, Starship, eza, tmux, and workmux, including clipboard integration, agent tracking, and a daily workflow."
 ---
 
-I use Ghostty, Zsh, Starship, eza, tmux, and workmux. Ghostty handles the terminal, Starship builds the prompt, and eza adds icons and Git details to directory listings. tmux keeps sessions running when I detach, while workmux keeps task checkouts and agent status together.
+A useful terminal setup needs readable output, persistent sessions, and a way to keep parallel tasks separate. I use Ghostty as the GPU-accelerated terminal, Zsh with Starship and eza for the shell experience, tmux for persistent sessions, and workmux to connect Git worktrees with agent workflows.
 
-The terminal uses Rosé Pine Dawn and JetBrains Mono. The prompt uses a customized Gruvbox Rainbow preset, with the directory and Git state on the left and language tools and time on the right.
+The terminal uses Rosé Pine Dawn and JetBrains Mono. The prompt uses a customized Gruvbox Rainbow preset: operating system, username, directory, and Git state on the left; active language runtimes, environments, and time on the right.
 
-## Install
+## 1. Installation
 
-With Homebrew already installed:
+With Homebrew already installed, install the tools:
 
 ```sh
 brew install --cask ghostty
@@ -26,18 +26,22 @@ brew install starship eza tmux jq
 brew install raine/workmux/workmux
 ```
 
-Ghostty bundles JetBrains Mono and Nerd Font symbols. For the same font in other applications, optionally install `font-jetbrains-mono-nerd-font` through Homebrew.
+Ghostty bundles JetBrains Mono and Nerd Font symbols. For the same font in an IDE or other macOS applications, optionally install:
+
+```sh
+brew install --cask font-jetbrains-mono-nerd-font
+```
 
 Back up existing configuration files before editing. Merge the snippets below into them, keeping unrelated settings and updating existing keys instead of adding duplicates.
 
-## Ghostty
+## 2. Ghostty configuration
 
-Open the configuration through Ghostty’s settings menu and use:
+Open Ghostty’s configuration through its settings menu or **Cmd+,** and set the font, theme, spacing, and selection behavior:
 
 ```ini
-font-family = JetBrains Mono
+font-family = "JetBrains Mono"
 font-size = 14
-theme = Rose Pine Dawn
+theme = "Rose Pine Dawn"
 window-padding-x = 10
 window-padding-y = 8
 macos-option-as-alt = true
@@ -51,7 +55,9 @@ In Ghostty 1.3.1, clipboard writes, trailing-space trimming when copying, and th
 
 Shift selection already works with the default `mouse-shift-capture = false`; `never` prevents applications from overriding that behavior. `macos-option-as-alt = true` enables terminal Alt shortcuts but changes Option-based character input. Use `left` instead if you want to keep right Option available for characters such as € or ø, depending on your keyboard layout. See the [Ghostty option reference](https://ghostty.org/docs/config/reference).
 
-## Starship and eza
+## 3. Zsh, Starship, and eza
+
+### Step A: Update ~/.zshrc
 
 Add these lines once to `~/.zshrc`, replacing the old prompt initialization:
 
@@ -66,9 +72,12 @@ fi
 
 alias mux='tmux new-session -A -s work'
 alias wm='workmux'
+alias codex='codex --no-daemon'
 ```
 
-`ls` shows icons with folders first, `ll` adds details and Git status, and `la` includes hidden files. `--icons=auto` shows icons in terminal output and omits them when piping or redirecting output; see the [eza manual](https://github.com/eza-community/eza/blob/main/man/eza.1.md).
+`ls` shows icons with folders first, `ll` adds details and Git status, and `la` includes hidden files. `mux` creates or attaches to the tmux session named `work`, and `wm` is a shorter name for `workmux`. The Codex alias uses the launch mode that fixed automatic agent registration in my setup; the workmux section below explains why. `--icons=auto` shows icons in terminal output and omits them when piping or redirecting output; see the [eza manual](https://github.com/eza-community/eza/blob/main/man/eza.1.md).
+
+### Step B: Configure the Starship prompt
 
 Start with the Gruvbox Rainbow preset. Back up an existing Starship config first, since the preset command replaces it:
 
@@ -90,6 +99,26 @@ right_format = '[](color_blue)$c$cpp$rust$golang$nodejs$bun$php$java$kotlin$h
 
 Keep the preset’s palette definitions: these formats reference its named colors. To simplify the prompt, remove unwanted `$module` references from `format` or `right_format`. Deleting a module’s configuration table alone can leave it active with default styling. With these explicit formats, the preset’s unused Jujutsu and line-break tables can be removed as optional housekeeping. See the [Starship configuration reference](https://starship.rs/config/).
 
+Replace the preset’s existing `[git_status]` section with these settings to show counts beside each Git status symbol:
+
+```toml
+[git_status]
+style = "bg:color_aqua"
+format = '[[($all_status$ahead_behind )](fg:color_fg0 bg:color_aqua)]($style)'
+staged = '+$count '
+modified = '!$count '
+untracked = '?$count '
+deleted = '-$count '
+renamed = '»$count '
+conflicted = '~$count '
+stashed = '*$count '
+ahead = '⇡$count '
+behind = '⇣$count '
+diverged = '⇕⇡$ahead_count⇣$behind_count '
+```
+
+For example, `+2 !1 ?1` means two staged files, one modified file, and one untracked file. `-1` indicates one deleted file. The stash symbol counts stashes, while the arrows count commits ahead of or behind the upstream branch. Statuses with a zero count are hidden. Starship reads configuration changes on the next prompt.
+
 Check and reload the shell:
 
 ```sh
@@ -97,9 +126,9 @@ zsh -n ~/.zshrc
 source ~/.zshrc
 ```
 
-## tmux and copying
+## 4. tmux configuration and macOS clipboard
 
-Use these settings in `~/.tmux.conf`. I’m keeping the default prefix for now.
+tmux keeps its own copy buffers. To copy selections to the macOS system clipboard, the bindings below send text directly to `/usr/bin/pbcopy`. Use these settings in `~/.tmux.conf`; they enable mouse support and Vi copy mode while keeping the default **Ctrl+B** prefix.
 
 ```text
 set -g mouse on
@@ -119,6 +148,8 @@ bind -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel '/usr/bin/pbcopy'
 bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel '/usr/bin/pbcopy'
 bind -T copy-mode MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel '/usr/bin/pbcopy'
 ```
+
+Mouse support lets me click panes to focus them, drag pane borders to resize them, and select text. `base-index` starts window numbering at 1, `pane-base-index` does the same for panes, and `renumber-windows` closes numbering gaps after a window is removed.
 
 The mouse-release bindings cover both Vi and Emacs copy mode. With `mode-keys vi`, the Vi binding handles normal copy mode; the second binding also covers sessions using Emacs copy mode. Keeping both fixed copying in my earlier session, but both are only needed when using both tables. These `pbcopy` bindings write directly to the local macOS clipboard.
 
@@ -148,20 +179,22 @@ Test each local copying path separately with a harmless word:
 
 Each test should print the selected text. These checks verify local copying; they do not verify the remote OSC 52 path.
 
-## workmux
+## 5. workmux setup
 
-Inside tmux:
+workmux connects isolated Git worktrees with tmux windows, so each task can have its own checkout, agent, and shell. Run these commands from a shell inside tmux:
 
-```sh
-workmux list
-workmux status
-workmux dashboard
-workmux sidebar --position left on
-```
+| Command                              | Purpose                                   |
+| ------------------------------------ | ----------------------------------------- |
+| `workmux list`                       | List task worktrees.                      |
+| `workmux status`                     | Check tracked agent status.               |
+| `workmux dashboard`                  | Open the management dashboard.            |
+| `workmux add my-feature`             | Create a task worktree and its workspace. |
+| `workmux open my-feature`            | Return to an existing task.               |
+| `workmux sidebar --position left on` | Enable the sidebar on the left.           |
 
 Press `q` to leave the dashboard. The dashboard and sidebar are separate views: opening the dashboard does not enable the sidebar. Use `workmux add my-feature` to create a task checkout, or `workmux open my-feature` to reopen one.
 
-### Sidebar appearance
+### Customizing the sidebar
 
 To keep the sidebar on the left and show agent identity, merge this into `~/.config/workmux/config.yaml`:
 
@@ -181,7 +214,7 @@ sidebar:
         - "{pane_title} {fill} {git_stats}"
 ```
 
-`{agent_icon}` shows identity, such as **CX** for Codex. `nerdfont: true` changes status symbols; it does not replace the CX label with a logo. Unknown agent identities render an empty icon. My Codex pane appeared as `node`, which workmux did not identify as Codex; correcting its current registration and adding the template field made CX visible. That identity correction was specific to the running session.
+The sidebar keeps agent identity, elapsed time, and Git diff information beside the task panes. `{agent_icon}` shows identity, such as **CX** for Codex. `nerdfont: true` changes status symbols; it does not replace the CX label with a logo. Unknown agent identities render an empty icon. My Codex pane appeared as `node`, which workmux did not identify as Codex; correcting its current registration and adding the template field made CX visible. That identity correction was specific to the running session.
 
 The timer is **elapsed time since the last status change**, including time spent done or idle. It keeps counting without new messages and does not indicate ongoing processing or token use. Remove `{elapsed}` from the templates to hide it. The done indicator clears when you focus the agent window, so a missing check mark does not mean the agent restarted. See [sidebar customization](https://workmux.raine.dev/guide/sidebar/customization/).
 
@@ -249,7 +282,7 @@ Use the Codex session ID from that conversation’s session metadata, not its ti
 
 After binding, new prompts produced working → done transitions automatically in my session. A status update also resolved the pane with the tmux targeting variables removed. Automatic registration was subsequently verified with `codex --no-daemon`. The permission-request waiting state and persistent identity detection still need an end-to-end check. See the [upstream status-tracking guide](https://workmux.raine.dev/guide/status-tracking/).
 
-## Agent footer and clipboard
+## 6. Agent footer and clipboard
 
 In my Codex CLI 0.163.0 setup, these settings share the existing `[tui]` table in `${CODEX_HOME:-~/.codex}/config.toml`:
 
@@ -265,7 +298,7 @@ Claude Code has its own footer and clipboard settings. Its clipboard path still 
 
 I’m leaving the tmux prefix, editor navigation, and final status-bar layout open for now.
 
-## Shortcuts and workflow
+## 7. Shortcuts and workflow
 
 I keep one tmux session for work and a separate workmux worktree for each task. Ghostty is the terminal window; tmux windows hold the tasks, and panes hold the agent and shell side by side.
 
