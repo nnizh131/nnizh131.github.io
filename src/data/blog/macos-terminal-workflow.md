@@ -2,6 +2,7 @@
 title: "Terminal Workflow: tmux, workmux, and Codex"
 author: Nika Nizharadze
 pubDatetime: 2026-10-19T08:02:00Z
+modDatetime: 2026-10-19T20:15:00Z
 featured: false
 draft: false
 tags:
@@ -11,7 +12,9 @@ tags:
 description: "My daily flow for starting tmux, creating workmux tasks, running Codex, reviewing changes, and returning to work. Part 3 of a three-part series."
 ---
 
-![Terminal demo showing Codex completing a coding task, verified output, the workmux sidebar, and dashboard diff review.](/terminal-setup/terminal-setup-polished.gif)
+![Rosé Pine Dawn terminal demo: colorful Starship prompt, Codex completing a task, workmux sidebar, and dashboard diff review.](/terminal-setup/terminal-setup-dawn-colorful.gif)
+
+[Watch the video with playback controls](/terminal-setup/terminal-setup-dawn-colorful.mp4). The demo renders a real tmux, workmux, and Codex session with the Dawn palette and updated prompt colors.
 
 This is a three-part series:
 
@@ -19,7 +22,7 @@ This is a three-part series:
 2. [Terminal Shortcuts: Keybindings for Ghostty and tmux](/posts/macos-terminal-shortcuts/)
 3. [Terminal Workflow: tmux, workmux, and Codex](/posts/macos-terminal-workflow/)
 
-I keep one tmux session for work and a separate workmux worktree for each task. Ghostty is the terminal window; tmux windows hold the tasks, and panes hold the agent and shell side by side.
+I keep one tmux session for work and a separate workmux worktree for each task. Ghostty is the terminal window; tmux windows hold the tasks, and panes hold Codex above a shell.
 
 This flow assumes the configuration and status hooks from [Part 1](/posts/macos-terminal-setup/) are in place. Keep [Part 2: Shortcuts](/posts/macos-terminal-shortcuts/) nearby for navigation and copying.
 
@@ -37,7 +40,7 @@ This flow assumes the configuration and status hooks from [Part 1](/posts/macos-
    workmux add my-feature
    ```
 
-   Use a descriptive task name instead of `my-feature`. To return to an existing task, run `workmux open my-feature`.
+   Use a descriptive task name instead of `my-feature`. New worktrees need their own project dependencies and any required local configuration. To return to an existing task, run `workmux open my-feature`.
 
 3. **Start the agent.** In the task’s agent pane, run:
 
@@ -45,7 +48,7 @@ This flow assumes the configuration and status hooks from [Part 1](/posts/macos-
    codex --no-daemon
    ```
 
-   With the Zsh alias from [Part 1](/posts/macos-terminal-setup/) loaded, `codex` is enough. Give it the task, then use the other shell pane for commands, tests, and reviewing changes. If the agent is already running, continue that session.
+   With the Zsh alias from [Part 1](/posts/macos-terminal-setup/) loaded, `codex` is enough. Give it a concrete task, for example: “Replace `src/app.js` with a `greet(name)` function, log `greet("world")`, and run Node to verify.” Use the lower shell pane for commands, tests, and reviewing changes. If the agent is already running, continue that session.
 
 4. **Keep the sidebar visible.** Run this from a shell pane inside tmux:
 
@@ -53,8 +56,8 @@ This flow assumes the configuration and status hooks from [Part 1](/posts/macos-
    workmux sidebar --position left on
    ```
 
-   The hooks register the agent and update its status. The identity label tells me which agent is running; the timer shows time since its last status change. For a larger view, run `workmux dashboard` and press **q** when finished.
+   The hooks register the agent and update its status. **CX** identifies Codex; the timer shows time since its last status change. Run `workmux dashboard --session` for the current session, or omit `--session` for all sessions. **Tab** switches Agents/Worktrees; **d** opens a diff; **q** goes back.
 
-5. **Review and switch tasks.** Read the agent’s changes, run the project’s checks in the shell pane, and inspect `git diff` before committing. Switch windows with the [shortcuts in Part 2](/posts/macos-terminal-shortcuts/) or use `workmux open` to return to another worktree. Copy terminal output with tmux copy mode or Ghostty’s Shift selection.
+5. **Review and switch tasks.** Read the agent’s changes, run the project’s checks in the shell pane, and inspect `git diff --stat` and `git diff` before committing. In the demo, `node src/app.js` prints `Hello, world!`. Switch windows with the [shortcuts in Part 2](/posts/macos-terminal-shortcuts/) or use `workmux open` to return to another worktree. Copy terminal output with tmux copy mode or Ghostty’s Shift selection.
 
 6. **Leave and resume.** Press **Ctrl+B**, then **d** to detach. Later, run `tmux new-session -A -s work` again. The session stays available while the tmux server and Mac remain running; it does not survive a reboot by itself.

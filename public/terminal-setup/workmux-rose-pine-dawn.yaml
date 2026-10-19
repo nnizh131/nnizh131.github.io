@@ -1,0 +1,35 @@
+nerdfont: true
+theme:
+  mode: light
+  custom:
+    current_row_bg: "#f4ede8"
+    highlight_row_bg: "#dfdad9"
+    current_worktree_fg: "#286983"
+    text: "#575279"
+    dimmed: "#797593"
+    border: "#cecacd"
+    help_border: "#cecacd"
+    help_muted: "#797593"
+    header: "#907aa9"
+    keycap: "#286983"
+    info: "#56949f"
+    success: "#286983"
+    warning: "#a46b19"
+    danger: "#b4637a"
+    accent: "#907aa9"
+panes:
+  - focus: true
+  - split: vertical
+    size: 7
+sidebar:
+  position: left
+  templates:
+    compact: "{status_icon} {agent_icon} {primary} {pane_suffix} {fill} {elapsed}"
+    tiles:
+      - "{agent_icon} {primary} {pane_suffix} {fill} {elapsed}"
+      - "{secondary} {fill} {git_stats}"
+      - "{pane_title} {fill} {pr_number} {pr_checks}"
+    grouped:
+      tiles:
+        - "{agent_icon} {primary} {pane_suffix} {fill} {pr_number} {pr_checks} {elapsed}"
+        - "{pane_title} {fill} {git_stats}"

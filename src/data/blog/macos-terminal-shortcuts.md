@@ -2,6 +2,7 @@
 title: "Terminal Shortcuts: Keybindings for Ghostty and tmux"
 author: Nika Nizharadze
 pubDatetime: 2026-10-19T08:01:00Z
+modDatetime: 2026-10-19T20:15:00Z
 featured: false
 draft: false
 tags:
@@ -11,7 +12,9 @@ tags:
 description: "The Ghostty and tmux shortcuts I use for windows, panes, copying, and persistent sessions. Part 2 of a three-part series."
 ---
 
-![Terminal demo showing Codex completing a coding task, verified output, the workmux sidebar, and dashboard diff review.](/terminal-setup/terminal-setup-polished.gif)
+![Rosé Pine Dawn terminal demo: colorful Starship prompt, Codex completing a task, workmux sidebar, and dashboard diff review.](/terminal-setup/terminal-setup-dawn-colorful.gif)
+
+[Watch the video with playback controls](/terminal-setup/terminal-setup-dawn-colorful.mp4). The demo renders a real tmux, workmux, and Codex session with the Dawn palette and updated prompt colors.
 
 This is a three-part series:
 
@@ -37,7 +40,9 @@ The tmux prefix is **Ctrl+B**. Press it, release it, then press the next key. Co
 | **Shift+drag**, then **Cmd+C**   | Select and copy through Ghostty.                           |
 | **Cmd+V**                        | Paste from the macOS clipboard.                            |
 | **Ctrl+B**, then **d**           | Detach from tmux while leaving its tasks running.          |
-| **q** in the workmux dashboard   | Close the dashboard and return to the shell.               |
+| **Tab** in the dashboard         | Switch between Agents and Worktrees.                       |
+| **d** in the dashboard           | Open the selected item’s diff.                             |
+| **q** in the workmux dashboard   | Go back from a diff, or close the dashboard.               |
 
 With tmux mouse support enabled, I can also click a pane to focus it and drag pane borders to resize them.
 
