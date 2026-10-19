@@ -11,6 +11,8 @@ tags:
 description: "My daily flow for starting tmux, creating workmux tasks, running Codex, reviewing changes, and returning to work. Part 3 of a three-part series."
 ---
 
+![Terminal demo showing Codex startup, a prompt and answer, the workmux sidebar, and dashboard tabs.](/terminal-setup/terminal-setup-full.gif)
+
 This is a three-part series:
 
 1. [Terminal Setup: Ghostty, tmux, and workmux](/posts/macos-terminal-setup/)

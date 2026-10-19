@@ -12,6 +12,8 @@ tags:
 description: "A practical macOS terminal setup with Ghostty, Zsh, Starship, eza, tmux, and workmux, including clipboard integration and agent tracking. Part 1 of a three-part series."
 ---
 
+![Terminal demo showing Codex startup, a prompt and answer, the workmux sidebar, and dashboard tabs.](/terminal-setup/terminal-setup-full.gif)
+
 A useful terminal setup needs readable output, persistent sessions, and a way to keep parallel tasks separate. I use Ghostty as the GPU-accelerated terminal, Zsh with Starship and eza for the shell experience, tmux for persistent sessions, and workmux to connect Git worktrees with agent workflows.
 
 This is a three-part series:
