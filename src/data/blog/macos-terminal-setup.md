@@ -45,10 +45,6 @@ copy-on-select = clipboard
 
 Reload through the menu or with **Cmd+Shift+,**. Hold **Shift** while dragging to select terminal text when an application captures the mouse.
 
-In Ghostty 1.3.1, clipboard writes, trailing-space trimming when copying, and the macOS **Cmd+C** and **Cmd+V** bindings already have suitable defaults. Automatic selection copying also defaults to `true`; `copy-on-select = clipboard` explicitly copies to the system clipboard. Trimming applies to Ghostty’s own copying, not application clipboard writes through OSC 52.
-
-Shift selection already works with the default `mouse-shift-capture = false`; `never` prevents applications from overriding that behavior. `macos-option-as-alt = true` enables terminal Alt shortcuts but changes Option-based character input. Use `left` instead if you want to keep right Option available for characters such as € or ø, depending on your keyboard layout. See the [Ghostty option reference](https://ghostty.org/docs/config/reference).
-
 ## 3. Zsh, Starship, and eza
 
 ### Step A: Update ~/.zshrc
