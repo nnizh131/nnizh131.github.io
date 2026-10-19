@@ -138,34 +138,6 @@ bind -T copy-mode MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel '/usr/bin/
 
 Mouse support lets me click panes to focus them, drag pane borders to resize them, and select text. `base-index` starts window numbering at 1, `pane-base-index` does the same for panes, and `renumber-windows` closes numbering gaps after a window is removed.
 
-The mouse-release bindings cover both Vi and Emacs copy mode. With `mode-keys vi`, the Vi binding handles normal copy mode; the second binding also covers sessions using Emacs copy mode. Keeping both fixed copying in my earlier session, but both are only needed when using both tables. These `pbcopy` bindings write directly to the local macOS clipboard.
-
-In tmux 3.8, `escape-time` already defaults to 10 milliseconds, so it needs no override. Its default `xterm*` terminal features also include clipboard support, matching `xterm-ghostty`. The explicit `RGB:clipboard` declaration keeps these capabilities stated in the config; it may be redundant when tmux detects them automatically. Check `tmux display-message -p '#{client_termname} #{client_termfeatures}'` from an attached client before removing it. See the [tmux 3.8 defaults](https://github.com/tmux/tmux/blob/3.8/options-table.c).
-
-`set-clipboard on` enables a separate OSC 52 path, allowing applications to create tmux buffers and forward clipboard writes to the outer terminal. Successful copying through `pbcopy` does not verify that path. Local `pbcopy` bindings also do not copy to your Mac when tmux runs on a remote host; remote clipboard integration needs OSC 52 support through the terminal chain.
-
-From outside tmux, create or attach to the session:
-
-```sh
-tmux new-session -A -s work
-```
-
-Inside tmux, apply changes:
-
-```sh
-tmux source-file ~/.tmux.conf
-```
-
-New terminal and history settings may require new panes. Existing tasks can keep running; there’s no need to kill the server.
-
-Test each local copying path separately with a harmless word:
-
-1. **tmux keyboard:** press **Ctrl+B**, then **[** to enter copy mode. Navigate to the word, press **v**, extend the selection, and press **y**. Run `pbpaste` to confirm the selected text.
-2. **tmux mouse:** drag across the word and release, then run `pbpaste`.
-3. **Ghostty selection:** hold **Shift** while dragging, press **Cmd+C**, then run `pbpaste`.
-
-Each test should print the selected text. These checks verify local copying; they do not verify the remote OSC 52 path.
-
 ## 5. workmux setup
 
 workmux connects isolated Git worktrees with tmux windows, so each task can have its own checkout, agent, and shell. Run these commands from a shell inside tmux:
