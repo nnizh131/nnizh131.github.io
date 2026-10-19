@@ -1,5 +1,5 @@
 ---
-title: "Modern macOS Terminal Setup, Part 1: Ghostty, tmux, and workmux"
+title: "Terminal Setup: Ghostty, tmux, and workmux"
 author: Nika Nizharadze
 pubDatetime: 2026-10-18T08:00:00Z
 modDatetime: 2026-10-19T08:00:00Z
@@ -16,9 +16,9 @@ A useful terminal setup needs readable output, persistent sessions, and a way to
 
 This is a three-part series:
 
-1. [Setup: Ghostty, tmux, and workmux](/posts/macos-terminal-setup/)
-2. [Shortcuts](/posts/macos-terminal-shortcuts/)
-3. [Daily workflow](/posts/macos-terminal-workflow/)
+1. [Terminal Setup: Ghostty, tmux, and workmux](/posts/macos-terminal-setup/)
+2. [Terminal Shortcuts: Keybindings for Ghostty and tmux](/posts/macos-terminal-shortcuts/)
+3. [Terminal Workflow: tmux, workmux, and Codex](/posts/macos-terminal-workflow/)
 
 ## 1. Installation
 

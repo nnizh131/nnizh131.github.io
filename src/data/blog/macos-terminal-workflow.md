@@ -1,5 +1,5 @@
 ---
-title: "Modern macOS Terminal Setup, Part 3: Daily Workflow"
+title: "Terminal Workflow: tmux, workmux, and Codex"
 author: Nika Nizharadze
 pubDatetime: 2026-10-19T08:02:00Z
 featured: false
@@ -13,9 +13,9 @@ description: "My daily flow for starting tmux, creating workmux tasks, running C
 
 This is a three-part series:
 
-1. [Setup: Ghostty, tmux, and workmux](/posts/macos-terminal-setup/)
-2. [Shortcuts](/posts/macos-terminal-shortcuts/)
-3. [Daily workflow](/posts/macos-terminal-workflow/)
+1. [Terminal Setup: Ghostty, tmux, and workmux](/posts/macos-terminal-setup/)
+2. [Terminal Shortcuts: Keybindings for Ghostty and tmux](/posts/macos-terminal-shortcuts/)
+3. [Terminal Workflow: tmux, workmux, and Codex](/posts/macos-terminal-workflow/)
 
 I keep one tmux session for work and a separate workmux worktree for each task. Ghostty is the terminal window; tmux windows hold the tasks, and panes hold the agent and shell side by side.
 

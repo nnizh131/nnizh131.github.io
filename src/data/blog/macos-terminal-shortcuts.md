@@ -1,5 +1,5 @@
 ---
-title: "Modern macOS Terminal Setup, Part 2: Shortcuts"
+title: "Terminal Shortcuts: Keybindings for Ghostty and tmux"
 author: Nika Nizharadze
 pubDatetime: 2026-10-19T08:01:00Z
 featured: false
@@ -13,9 +13,9 @@ description: "The Ghostty and tmux shortcuts I use for windows, panes, copying, 
 
 This is a three-part series:
 
-1. [Setup: Ghostty, tmux, and workmux](/posts/macos-terminal-setup/)
-2. [Shortcuts](/posts/macos-terminal-shortcuts/)
-3. [Daily workflow](/posts/macos-terminal-workflow/)
+1. [Terminal Setup: Ghostty, tmux, and workmux](/posts/macos-terminal-setup/)
+2. [Terminal Shortcuts: Keybindings for Ghostty and tmux](/posts/macos-terminal-shortcuts/)
+3. [Terminal Workflow: tmux, workmux, and Codex](/posts/macos-terminal-workflow/)
 
 This is the shortcut reference for the [terminal setup in Part 1](/posts/macos-terminal-setup/). The Vi selection keys depend on that post’s tmux bindings, and Shift selection uses its Ghostty configuration.
 
