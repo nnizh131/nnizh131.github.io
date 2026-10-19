@@ -16,8 +16,6 @@ A useful terminal setup needs readable output, persistent sessions, and a way to
 
 ## 1. Installation
 
-With Homebrew already installed, install the tools:
-
 ```sh
 brew install --cask ghostty
 brew install starship eza tmux jq
@@ -29,8 +27,6 @@ Ghostty bundles JetBrains Mono and Nerd Font symbols. For the same font in an ID
 ```sh
 brew install --cask font-jetbrains-mono-nerd-font
 ```
-
-Back up existing configuration files before editing. Merge the snippets below into them, keeping unrelated settings and updating existing keys instead of adding duplicates.
 
 ## 2. Ghostty configuration
 
