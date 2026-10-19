@@ -249,38 +249,9 @@ The agent then appeared automatically in the sidebar. To use this launch mode wh
 alias codex='codex --no-daemon'
 ```
 
-Open a new shell or run `source ~/.zshrc` to load it. This alias affects interactive shell commands; scripts and workmux configurations that launch Codex directly should use `codex --no-daemon` explicitly. The session-ID binding below is a workaround for an existing session launched through the shared server.
+Open a new shell or run `source ~/.zshrc` to load it. This alias affects interactive shell commands; scripts and workmux configurations that launch Codex directly should use `codex --no-daemon` explicitly.
 
-Find the agent pane from another shell inside the **same tmux server**:
-
-```sh
-tmux list-panes -a -F '#{pane_id} #{window_name} #{pane_current_command} #{pane_current_path}'
-```
-
-For a temporary registration, substitute the confirmed pane ID:
-
-```sh
-agent_pane='%14'
-TMUX_PANE="$agent_pane" workmux register-agent
-workmux status
-```
-
-This makes the agent visible, but hooks that lack pane context may still fail to update it. In my session, binding the exact Codex session ID to that pane allowed subsequent hooks to resolve it by session ID. From the same tmux server, replace both placeholders with the confirmed values:
-
-```sh
-agent_pane='%14'
-agent_session='REPLACE_WITH_EXACT_CODEX_SESSION_ID'
-agent_socket="$(tmux display-message -p '#{socket_path}')"
-printf '{"session_id":"%s"}\n' "$agent_session" |
-  env WORKMUX_STATUS_BACKEND=tmux \
-      WORKMUX_STATUS_INSTANCE="$agent_socket" \
-      WORKMUX_STATUS_PANE_ID="$agent_pane" \
-      workmux register-agent
-```
-
-Use the Codex session ID from that conversation’s session metadata, not its title or tmux pane ID. Do not guess a pane from the working directory: multiple agents can share it. This binding repairs the current session; it does not establish a permanent fix for fresh sessions.
-
-After binding, new prompts produced working → done transitions automatically in my session. A status update also resolved the pane with the tmux targeting variables removed. Automatic registration was subsequently verified with `codex --no-daemon`. The permission-request waiting state and persistent identity detection still need an end-to-end check. See the [upstream status-tracking guide](https://workmux.raine.dev/guide/status-tracking/).
+To check the setup, start a new Codex session inside tmux and confirm it appears in the sidebar without manual registration. Send a prompt and check that its status moves from working to done. Automatic registration and these transitions are verified in my setup. The permission-request waiting state and persistent identity detection still need an end-to-end check. See the [upstream status-tracking guide](https://workmux.raine.dev/guide/status-tracking/).
 
 ## 6. Agent footer and clipboard
 
