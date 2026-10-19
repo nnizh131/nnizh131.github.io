@@ -138,7 +138,15 @@ Inside tmux, apply changes:
 tmux source-file ~/.tmux.conf
 ```
 
-New terminal and history settings may require new panes. Existing tasks can keep running; there’s no need to kill the server. Select a harmless word and run `pbpaste` to check copying.
+New terminal and history settings may require new panes. Existing tasks can keep running; there’s no need to kill the server.
+
+Test each local copying path separately with a harmless word:
+
+1. **tmux keyboard:** press **Ctrl+B**, then **[** to enter copy mode. Navigate to the word, press **v**, extend the selection, and press **y**. Run `pbpaste` to confirm the selected text.
+2. **tmux mouse:** drag across the word and release, then run `pbpaste`.
+3. **Ghostty selection:** hold **Shift** while dragging, press **Cmd+C**, then run `pbpaste`.
+
+Each test should print the selected text. These checks verify local copying; they do not verify the remote OSC 52 path.
 
 ## workmux
 
@@ -151,31 +159,41 @@ workmux dashboard
 workmux sidebar --position left on
 ```
 
-Press `q` to leave the dashboard. Use `workmux add my-feature` to create a task checkout, or `workmux open my-feature` to reopen one.
+Press `q` to leave the dashboard. The dashboard and sidebar are separate views: opening the dashboard does not enable the sidebar. Use `workmux add my-feature` to create a task checkout, or `workmux open my-feature` to reopen one.
 
-To keep the sidebar on the left, merge this into `~/.config/workmux/config.yaml`:
+### Sidebar appearance
+
+To keep the sidebar on the left and show agent identity, merge this into `~/.config/workmux/config.yaml`:
 
 ```yaml
+nerdfont: true
 sidebar:
   position: left
+  templates:
+    compact: "{status_icon} {agent_icon} {primary} {pane_suffix} {fill} {elapsed}"
+    tiles:
+      - "{agent_icon} {primary} {pane_suffix} {fill} {elapsed}"
+      - "{secondary} {fill} {git_stats}"
+      - "{pane_title} {fill} {pr_number} {pr_checks}"
+    grouped:
+      tiles:
+        - "{agent_icon} {primary} {pane_suffix} {fill} {pr_number} {pr_checks} {elapsed}"
+        - "{pane_title} {fill} {git_stats}"
 ```
 
-If the sidebar says **No agents running**, check registration first. From a sibling shell, find the pane actually running the agent:
+`{agent_icon}` shows identity, such as **CX** for Codex. `nerdfont: true` changes status symbols; it does not replace the CX label with a logo. Unknown agent identities render an empty icon. My Codex pane appeared as `node`, which workmux did not identify as Codex; correcting its current registration and adding the template field made CX visible. That identity correction was specific to the running session.
+
+The timer is **elapsed time since the last status change**, including time spent done or idle. It keeps counting without new messages and does not indicate ongoing processing or token use. Remove `{elapsed}` from the templates to hide it. The done indicator clears when you focus the agent window, so a missing check mark does not mean the agent restarted. See [sidebar customization](https://workmux.raine.dev/guide/sidebar/customization/).
+
+### Hooks and missing agents
+
+Install status tracking with:
 
 ```sh
-tmux list-panes -a -F '#{pane_id} #{window_name} #{pane_current_command} #{pane_current_path}'
+workmux setup --hooks
 ```
 
-Substitute that pane ID below:
-
-```sh
-agent_pane='%14'
-TMUX_PANE="$agent_pane" workmux register-agent
-TMUX_PANE="$agent_pane" workmux set-window-status working
-workmux status
-```
-
-That repairs registration and manually sets the status for the session. Automatic updates depend on agent hooks:
+A **configured** result confirms installation. For Codex, also check `/hooks` for enabled hooks and review any changed definitions; see the [hook review instructions](https://learn.chatgpt.com/docs/hooks#review-and-trust-hooks).
 
 | Agent event             | workmux action                      |
 | ----------------------- | ----------------------------------- |
@@ -184,7 +202,38 @@ That repairs registration and manually sets the status for the session. Automati
 | Permission request      | `workmux set-window-status waiting` |
 | Turn finished           | `workmux set-window-status done`    |
 
-Hooks must target the agent’s pane and skip execution outside tmux. For Codex, review and trust changed hooks through `/hooks`; see the [hook review instructions](https://learn.chatgpt.com/docs/hooks#review-and-trust-hooks). The sidebar and manual working status are verified in my session; fresh-launch registration and the full status lifecycle still need an end-to-end check.
+In my Ghostty, tmux 3.8, workmux 0.1.276, and Codex CLI 0.163.0 session, the hooks were installed, enabled, and firing, but the sidebar still showed **No agents running**. The workmux log showed `tmux_pane=None`: the hook processes had lost their tmux pane context. Workmux could not associate those events with the running agent. Reinstalling or trusting the same hooks again did not address that missing association.
+
+Find the agent pane from another shell inside the **same tmux server**:
+
+```sh
+tmux list-panes -a -F '#{pane_id} #{window_name} #{pane_current_command} #{pane_current_path}'
+```
+
+For a temporary registration, substitute the confirmed pane ID:
+
+```sh
+agent_pane='%14'
+TMUX_PANE="$agent_pane" workmux register-agent
+workmux status
+```
+
+This makes the agent visible, but hooks that lack pane context may still fail to update it. In my session, binding the exact Codex session ID to that pane allowed subsequent hooks to resolve it by session ID. From the same tmux server, replace both placeholders with the confirmed values:
+
+```sh
+agent_pane='%14'
+agent_session='REPLACE_WITH_EXACT_CODEX_SESSION_ID'
+agent_socket="$(tmux display-message -p '#{socket_path}')"
+printf '{"session_id":"%s"}\n' "$agent_session" |
+  env WORKMUX_STATUS_BACKEND=tmux \
+      WORKMUX_STATUS_INSTANCE="$agent_socket" \
+      WORKMUX_STATUS_PANE_ID="$agent_pane" \
+      workmux register-agent
+```
+
+Use the Codex session ID from that conversation’s session metadata, not its title or tmux pane ID. Do not guess a pane from the working directory: multiple agents can share it. This binding repairs the current session; it does not establish a permanent fix for fresh sessions.
+
+After binding, new prompts produced working → done transitions automatically in my session. A status update also resolved the pane with the tmux targeting variables removed. Fresh-session registration, the permission-request waiting state, and persistent identity detection still need an end-to-end check. See the [upstream status-tracking guide](https://workmux.raine.dev/guide/status-tracking/).
 
 ## Agent footer and clipboard
 
