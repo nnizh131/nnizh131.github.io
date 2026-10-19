@@ -214,10 +214,6 @@ The agent then appeared automatically in the sidebar. To use this launch mode wh
 alias codex='codex --no-daemon'
 ```
 
-Open a new shell or run `source ~/.zshrc` to load it. This alias affects interactive shell commands; scripts and workmux configurations that launch Codex directly should use `codex --no-daemon` explicitly.
-
-To check the setup, start a new Codex session inside tmux and confirm it appears in the sidebar without manual registration. Send a prompt and check that its status moves from working to done. Automatic registration and these transitions are verified in my setup. The permission-request waiting state and persistent identity detection still need an end-to-end check. See the [upstream status-tracking guide](https://workmux.raine.dev/guide/status-tracking/).
-
 ## 6. Agent footer and clipboard
 
 In my Codex CLI 0.163.0 setup, these settings share the existing `[tui]` table in `${CODEX_HOME:-~/.codex}/config.toml`:
