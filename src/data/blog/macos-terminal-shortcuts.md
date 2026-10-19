@@ -11,7 +11,7 @@ tags:
 description: "The Ghostty and tmux shortcuts I use for windows, panes, copying, and persistent sessions. Part 2 of a three-part series."
 ---
 
-![Terminal demo showing Codex startup, a prompt and answer, the workmux sidebar, and dashboard tabs.](/terminal-setup/terminal-setup-full.gif)
+![Terminal demo showing Codex completing a coding task, verified output, the workmux sidebar, and dashboard diff review.](/terminal-setup/terminal-setup-polished.gif)
 
 This is a three-part series:
 
