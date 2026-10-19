@@ -42,14 +42,14 @@ window-padding-x = 10
 window-padding-y = 8
 macos-option-as-alt = true
 mouse-shift-capture = never
-clipboard-write = allow
-clipboard-trim-trailing-spaces = true
 copy-on-select = clipboard
-keybind = super+c=copy_to_clipboard
-keybind = super+v=paste_from_clipboard
 ```
 
 Reload through the menu or with **Cmd+Shift+,**. Hold **Shift** while dragging to select terminal text when an application captures the mouse.
+
+In Ghostty 1.3.1, clipboard writes, trailing-space trimming when copying, and the macOS **Cmd+C** and **Cmd+V** bindings already have suitable defaults. Automatic selection copying also defaults to `true`; `copy-on-select = clipboard` explicitly copies to the system clipboard. Trimming applies to Ghostty’s own copying, not application clipboard writes through OSC 52.
+
+Shift selection already works with the default `mouse-shift-capture = false`; `never` prevents applications from overriding that behavior. `macos-option-as-alt = true` enables terminal Alt shortcuts but changes Option-based character input. Use `left` instead if you want to keep right Option available for characters such as € or ø, depending on your keyboard layout. See the [Ghostty option reference](https://ghostty.org/docs/config/reference).
 
 ## Starship and eza
 
@@ -59,16 +59,16 @@ Add these lines once to `~/.zshrc`, replacing the old prompt initialization:
 eval "$(starship init zsh)"
 
 if command -v eza >/dev/null 2>&1; then
-  alias ls='eza --icons=always --group-directories-first'
-  alias ll='eza --icons=always --group-directories-first --long --git'
-  alias la='eza --icons=always --group-directories-first --all'
+  alias ls='eza --icons=auto --group-directories-first'
+  alias ll='eza --icons=auto --group-directories-first --long --git'
+  alias la='eza --icons=auto --group-directories-first --all'
 fi
 
 alias mux='tmux new-session -A -s work'
 alias wm='workmux'
 ```
 
-`ls` shows icons with folders first, `ll` adds details and Git status, and `la` includes hidden files.
+`ls` shows icons with folders first, `ll` adds details and Git status, and `la` includes hidden files. `--icons=auto` shows icons in terminal output and omits them when piping or redirecting output; see the [eza manual](https://github.com/eza-community/eza/blob/main/man/eza.1.md).
 
 Start with the Gruvbox Rainbow preset. Back up an existing Starship config first, since the preset command replaces it:
 
@@ -88,6 +88,8 @@ format = '[](color_orange)$os$username[](bg:color_yellow fg:color_orange)$
 right_format = '[](color_blue)$c$cpp$rust$golang$nodejs$bun$php$java$kotlin$haskell$python[](fg:color_blue bg:color_bg3)$docker_context$conda$pixi[](fg:color_bg3 bg:color_bg1)$time[](fg:color_bg1)'
 ```
 
+Keep the preset’s palette definitions: these formats reference its named colors. To simplify the prompt, remove unwanted `$module` references from `format` or `right_format`. Deleting a module’s configuration table alone can leave it active with default styling. With these explicit formats, the preset’s unused Jujutsu and line-break tables can be removed as optional housekeeping. See the [Starship configuration reference](https://starship.rs/config/).
+
 Check and reload the shell:
 
 ```sh
@@ -105,7 +107,6 @@ set -g history-limit 100000
 set -g base-index 1
 setw -g pane-base-index 1
 set -g renumber-windows on
-set -sg escape-time 10
 set -g focus-events on
 set -g default-terminal 'tmux-256color'
 set -as terminal-features ',xterm-ghostty:RGB:clipboard'
@@ -119,7 +120,11 @@ bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel '/usr/b
 bind -T copy-mode MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel '/usr/bin/pbcopy'
 ```
 
-The mouse-release bindings cover both Vi and Emacs copy mode. Missing the second one was why copying initially failed in my running session. These `pbcopy` bindings are for local macOS use.
+The mouse-release bindings cover both Vi and Emacs copy mode. With `mode-keys vi`, the Vi binding handles normal copy mode; the second binding also covers sessions using Emacs copy mode. Keeping both fixed copying in my earlier session, but both are only needed when using both tables. These `pbcopy` bindings write directly to the local macOS clipboard.
+
+In tmux 3.8, `escape-time` already defaults to 10 milliseconds, so it needs no override. Its default `xterm*` terminal features also include clipboard support, matching `xterm-ghostty`. The explicit `RGB:clipboard` declaration keeps these capabilities stated in the config; it may be redundant when tmux detects them automatically. Check `tmux display-message -p '#{client_termname} #{client_termfeatures}'` from an attached client before removing it. See the [tmux 3.8 defaults](https://github.com/tmux/tmux/blob/3.8/options-table.c).
+
+`set-clipboard on` enables a separate OSC 52 path, allowing applications to create tmux buffers and forward clipboard writes to the outer terminal. Successful copying through `pbcopy` does not verify that path. Local `pbcopy` bindings also do not copy to your Mac when tmux runs on a remote host; remote clipboard integration needs OSC 52 support through the terminal chain.
 
 From outside tmux, create or attach to the session:
 
@@ -172,12 +177,12 @@ workmux status
 
 That repairs registration and manually sets the status for the session. Automatic updates depend on agent hooks:
 
-| Agent event | workmux action |
-| --- | --- |
-| Session start or resume | `workmux register-agent` |
+| Agent event             | workmux action                      |
+| ----------------------- | ----------------------------------- |
+| Session start or resume | `workmux register-agent`            |
 | Prompt or tool activity | `workmux set-window-status working` |
-| Permission request | `workmux set-window-status waiting` |
-| Turn finished | `workmux set-window-status done` |
+| Permission request      | `workmux set-window-status waiting` |
+| Turn finished           | `workmux set-window-status done`    |
 
 Hooks must target the agent’s pane and skip execution outside tmux. For Codex, review and trust changed hooks through `/hooks`; see the [hook review instructions](https://learn.chatgpt.com/docs/hooks#review-and-trust-hooks). The sidebar and manual working status are verified in my session; fresh-launch registration and the full status lifecycle still need an end-to-end check.
 
