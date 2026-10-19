@@ -30,7 +30,7 @@ brew install starship eza tmux jq
 brew install raine/workmux/workmux
 ```
 
-Ghostty bundles JetBrains Mono and Nerd Font symbols. For the same font in an IDE or other macOS applications, optionally install:
+Ghostty bundles JetBrains Mono and Nerd Font symbols. I use the Nerd Font build below, which is also available to my IDE and other macOS applications:
 
 ```sh
 brew install --cask font-jetbrains-mono-nerd-font
@@ -41,7 +41,7 @@ brew install --cask font-jetbrains-mono-nerd-font
 Open Ghostty’s configuration through its settings menu or **Cmd+,** and set the font, theme, spacing, and selection behavior:
 
 ```ini
-font-family = "JetBrains Mono"
+font-family = "JetBrainsMono Nerd Font Mono"
 font-size = 14
 theme = "Rose Pine Dawn"
 window-padding-x = 10
@@ -77,22 +77,52 @@ alias codex='codex --no-daemon'
 
 ### Step B: Configure the Starship prompt
 
-Start with the Gruvbox Rainbow preset:
+Start with the Gruvbox Rainbow preset for the segment layout, then replace its colors with Rosé Pine Dawn:
 
 ```sh
 mkdir -p ~/.config
 starship preset gruvbox-rainbow -o ~/.config/starship.toml
 ```
 
-In `~/.config/starship.toml`, replace the top-level `add_newline` and `format` values, and add or update `right_format` before the first table heading. These are my current layout settings:
+In `~/.config/starship.toml`, replace the top-level `palette`, `add_newline`, and `format` values, and add or update `right_format` before the first table heading. These are my current layout settings:
 
 ```toml
+palette = "rose_pine_dawn"
 add_newline = false
 format = '[](color_orange)$os$username[](bg:color_yellow fg:color_orange)$directory[](fg:color_yellow bg:color_aqua)$git_branch$git_status[](fg:color_aqua) $character'
 right_format = '[](color_blue)$c$cpp$rust$golang$nodejs$bun$php$java$kotlin$haskell$python[](fg:color_blue bg:color_bg3)$docker_context$conda$pixi[](fg:color_bg3 bg:color_bg1)$time[](fg:color_bg1)'
 ```
 
-Keep the preset’s palette definitions: these formats reference its named colors. To simplify the prompt, remove unwanted `$module` references from `format` or `right_format`. Deleting a module’s configuration table alone can leave it active with default styling. With these explicit formats, the preset’s unused Jujutsu and line-break tables can be removed as optional housekeeping. See the [Starship configuration reference](https://starship.rs/config/).
+Add this palette after the top-level settings. It uses the [Rosé Pine Dawn colors](https://rosepinetheme.com/palette/), keeping the existing directory, Git, language, and time segments. The color names remain compatible with the preset’s style references; their values now use pale Dawn backgrounds, purple-gray text, and teal or rose status accents.
+
+```toml
+[palettes.rose_pine_dawn]
+color_fg0 = "#575279"
+color_bg1 = "#fffaf3"
+color_bg3 = "#f4ede8"
+color_blue = "#dfdad9"
+color_aqua = "#fffaf3"
+color_green = "#286983"
+color_orange = "#cecacd"
+color_purple = "#907aa9"
+color_red = "#b4637a"
+color_yellow = "#f4ede8"
+color_pine = "#286983"
+```
+
+In the preset’s existing `[docker_context]` and `[conda]` sections, replace their `format` values to remove the remaining hard-coded Gruvbox color:
+
+```toml
+[docker_context]
+format = '[[ $symbol( $context) ](fg:color_pine bg:color_bg3)]($style)'
+
+[conda]
+format = '[[ $symbol( $environment) ](fg:color_pine bg:color_bg3)]($style)'
+```
+
+In the existing `[character]` section, set `vimcmd_visual_symbol = '[](bold fg:color_pine)'` so its arrow remains readable against the light terminal background.
+
+To simplify the prompt, remove unwanted `$module` references from `format` or `right_format`. See the [Starship configuration reference](https://starship.rs/config/).
 
 Replace the preset’s existing `[git_status]` section with these settings to show counts beside each Git status symbol:
 
