@@ -14,8 +14,6 @@ description: "A practical macOS terminal setup with Ghostty, Zsh, Starship, eza,
 
 A useful terminal setup needs readable output, persistent sessions, and a way to keep parallel tasks separate. I use Ghostty as the GPU-accelerated terminal, Zsh with Starship and eza for the shell experience, tmux for persistent sessions, and workmux to connect Git worktrees with agent workflows.
 
-The terminal uses Rosé Pine Dawn and JetBrains Mono. The prompt uses a customized Gruvbox Rainbow preset: operating system, username, directory, and Git state on the left; active language runtimes, environments, and time on the right.
-
 ## 1. Installation
 
 With Homebrew already installed, install the tools:
