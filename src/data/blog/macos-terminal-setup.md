@@ -2,14 +2,14 @@
 title: "Terminal Setup: Ghostty, tmux, and workmux"
 author: Nika Nizharadze
 pubDatetime: 2026-10-18T08:00:00Z
-modDatetime: 2026-10-19T20:15:00Z
+modDatetime: 2026-07-25T08:00:00Z
 featured: false
 draft: false
 tags:
   - macos
   - terminal
   - developer-tools
-description: "My macOS terminal setup: Ghostty, a colorful Rosé Pine Dawn prompt, tmux, workmux, and Codex, with downloadable configs. Part 1 of three."
+description: "My macOS terminal setup: Ghostty, a colorful Rosé Pine Dawn prompt, tmux, workmux, Codex, and Claude Code, with downloadable configs. Part 1 of three."
 ---
 
 ![Rosé Pine Dawn terminal demo: colorful Starship prompt, Codex completing a task, workmux sidebar, and dashboard diff review.](/terminal-setup/terminal-setup-dawn-colorful.gif)
@@ -22,7 +22,7 @@ This is a three-part series:
 2. [Terminal Shortcuts: Keybindings for Ghostty and tmux](/posts/macos-terminal-shortcuts/)
 3. [Terminal Workflow: tmux, workmux, and Codex](/posts/macos-terminal-workflow/)
 
-I use Ghostty for the terminal window, Zsh for the shell, Starship for the prompt, eza for file listings, tmux for persistent sessions, and workmux for task worktrees. Codex runs inside a task pane.
+I use Ghostty for the terminal window, Zsh for the shell, Starship for the prompt, eza for file listings, tmux for persistent sessions, and workmux for task worktrees. Codex or Claude Code runs inside a task pane.
 
 Each layer controls a different part of the appearance. Ghostty sets the font, size, and terminal colors. Starship styles only the shell prompt; eza supplies file icons. Codex and workmux have their own themes. A theme repository’s screenshot may also include a system-info tool—installing its colors does not reproduce the entire screenshot.
 
@@ -182,6 +182,67 @@ status_line = []
 ```
 
 The demo hides the optional footer. Use `/statusline` to choose model, context, or usage items for your own layout. Restart Codex after editing its config; `codex resume` returns to a conversation. See the [official theme instructions](https://learn.chatgpt.com/docs/cli-customization).
+
+## 7. Claude Code: Dawn colors and workmux
+
+Claude Code can use the same terminal and task layout. Install it with the [official native installer](https://code.claude.com/docs/en/setup#install-claude-code), then start it from your project and sign in:
+
+```sh
+curl -fsSL https://claude.ai/install.sh | bash
+claude --version
+claude
+```
+
+**Match the theme.** Run `/theme` inside Claude Code. The built-in `light-ansi` option uses terminal ANSI colors, but does not reproduce every Dawn color. For a custom palette, create `~/.claude/themes/rose-pine-dawn.json` with this light-based theme:
+
+```json
+{
+  "name": "Rosé Pine Dawn",
+  "base": "light",
+  "overrides": {
+    "claude": "#907aa9",
+    "claudeShimmer": "#b4637a",
+    "success": "#286983",
+    "error": "#b4637a",
+    "warning": "#a46b19",
+    "userMessageBackground": "#f2e9e1"
+  }
+}
+```
+
+Run `/theme` again and select Rosé Pine Dawn (`custom:rose-pine-dawn`). The corresponding setting is `"theme": "custom:rose-pine-dawn"` in `~/.claude/settings.json`; merge that key into the existing file, keeping permissions, hooks, and other settings. The custom theme controls Claude Code’s interface accents; Ghostty and tmux still control the terminal background. These tokens are present in my installed Claude Code 2.1.295. The Iris accent on permission prompts and the startup spinner still needs a visual check.
+
+**Keep truecolor inside tmux.** Use the `xterm-ghostty:RGB` terminal feature from section 4, then launch Claude Code with the variable already in its environment:
+
+```sh
+CLAUDE_CODE_TMUX_TRUECOLOR=1 claude
+```
+
+For future shell launches, add `export CLAUDE_CODE_TMUX_TRUECOLOR=1` to `~/.zshrc` and open a new shell. Setting it before startup also covers versions that read color capabilities before loading settings. See the [environment variable reference](https://code.claude.com/docs/en/env-vars). Keep the explicit Dawn pane colors from section 4 for this setup; `window-colorspace = display-p3` is a separate Ghostty display option, not a Claude Code theme requirement.
+
+**Launch through workmux.** To start Claude Code automatically in the upper pane, merge this into your workmux configuration, retaining the existing theme and sidebar settings:
+
+```yaml
+agent: claude
+panes:
+  - command: <agent>
+    focus: true
+  - split: vertical
+    size: 7
+```
+
+This replaces the `panes` list from section 5. New tasks start Claude Code above the seven-line shell. To choose Codex for a task instead, use `workmux add my-feature --agent codex`. See the [agent configuration reference](https://workmux.raine.dev/guide/agents/).
+
+Install the [workmux status plugin](https://workmux.raine.dev/guide/status-tracking/#claude-code-setup) if Claude Code tracking is not already configured:
+
+```sh
+claude plugin marketplace add raine/workmux
+claude plugin install workmux-status
+```
+
+Keep an existing workmux hook integration rather than installing duplicate tracking hooks. Restart Claude Code after changing its startup environment or installing the plugin; `claude --continue` resumes the most recent conversation in the current directory.
+
+To check the result, open a new task inside tmux, confirm `/theme` selects the custom theme, and compare the message surface and accents with a Claude Code session outside tmux. Run a small task and check `workmux status` for its working and completion states. Theme selection alone does not verify every prompt or spinner color.
 
 ## Quick checks
 
